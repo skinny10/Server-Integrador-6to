@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES6",                                   // Versión de JavaScript que deseas generar
+    "module": "commonjs",                              // Sistema de módulos que estás utilizando
+    "strict": true,                                    // Activa todas las verificaciones estrictas de TypeScript
+    "esModuleInterop": true,                           // Habilita la interoperabilidad con módulos ES6
+    "skipLibCheck": true,                              // Omitir la verificación de tipos en los archivos de definición
+    "forceConsistentCasingInFileNames": true,          // Obliga a que los nombres de archivo coincidan exactamente
+    "outDir": "./dist",                                // Directorio de salida para los archivos compilados
+    "rootDir": "./src",                                // Directorio raíz de tu proyecto
+    "sourceMap": true                                  // Genera archivos de mapa de fuente
+  },
+  "include": ["src/**/*", "tsconfig.json"],                             // Incluir todos los archivos TypeScript en el directorio src
+  "exclude": ["node_modules"]                          // Excluir el directorio node_modules
+}
