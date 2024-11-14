@@ -1,13 +1,12 @@
-import { SensorDataRepository } from '../repositories/InMemorySensorDataRepository';
+import { SensorDataModel } from "../models/SensorDataModel";
+
 
 export class HumidityService {
-    private repository: SensorDataRepository;
-
-    constructor(repository: SensorDataRepository) {
-        this.repository = repository;
-    }
-
     public async saveHumidityData(value: number): Promise<void> {
-        await this.repository.saveSensorData({ type: 'humidity', value, timestamp: new Date() });
+      const humidityData = new SensorDataModel({
+        type: 'humidity',
+        value,
+      });
+      await humidityData.save();
     }
-}
+  }
