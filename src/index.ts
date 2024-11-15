@@ -44,10 +44,10 @@ const websocketServer = new WebSocketServer(server);
 // Configuración de RabbitMQ
 const rabbitSettings = {
   protocol: "amqp",
-  hostname: "35.153.235.110",
+  hostname: "23.21.77.212",
   port: 5672,
-  username: "ferluna",
-  password: "integrador6",
+  username: "angel",
+  password: "angel123",
   vhost: "/",  
 };
 
@@ -56,30 +56,39 @@ async function connectToRabbitMQ() {
     const connection = await amqp.connect(rabbitSettings);
     const channel = await connection.createChannel();
 
-    const queue = 'integrador';
+    const queue = 'mqtt';
     await channel.assertQueue(queue, { durable: true });
     console.log(`Esperando mensajes en la cola: ${queue}`);
 
     channel.consume(queue, async (msg: any) => {
       if (msg !== null) {
-        const sensorData = JSON.parse(msg.content.toString());
-        console.log('Datos recibidos desde RabbitMQ:', sensorData);
-
-      
-        if (sensorData.type === 'temperature') {
-          await temperatureService.saveTemperatureData(sensorData.value);
-        } else if (sensorData.type === 'temperature2') {
-          await temperatureService2.saveTemperature2Data(sensorData.value);
-        } else if (sensorData.type === 'humidity') {
-          await humidityService.saveHumidityData(sensorData.value);
-        } else if (sensorData.type === 'humidity2') {
-          await humidityService2.saveHumidity2Data(sensorData.value);
-        }
-
-        websocketServer.broadcast(sensorData);
-        channel.ack(msg);
+          const messageContent = msg.content.toString();
+          let sensorData;
+  
+          try {
+              // Intentar corregir comillas simples y analizar el mensaje como JSON
+              const formattedMessage = messageContent.replace(/'/g, '"');
+              sensorData = JSON.parse(formattedMessage);
+              console.log('Datos recibidos desde RabbitMQ:', sensorData);
+  
+              // Procesar los datos del sensor
+              if (sensorData.temperatura !== undefined) {
+                  await temperatureService.saveTemperatureData(sensorData.temperatura);
+              } 
+              if (sensorData.humedad !== undefined) {
+                  await humidityService.saveHumidityData(sensorData.humedad);
+              }
+  
+              // Enviar los datos a través de WebSocket
+              websocketServer.broadcast(sensorData);
+          } catch (error) {
+              console.error('Error al procesar el mensaje:', messageContent, error);
+          } finally {
+              // Confirmar el mensaje, sea válido o no
+              channel.ack(msg);
+          }
       }
-    });
+  });
   } catch (error) {
     console.error('Error al conectar a RabbitMQ:', error);
   }
