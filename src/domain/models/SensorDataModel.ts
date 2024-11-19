@@ -1,20 +1,39 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import { DataTypes, Model } from 'sequelize';
+import sequelize from '../../config/database';
 
-// Define la interfaz con múltiples tipos para `value`
-interface ISensorData extends Document {
-  type: string;
-  value: number; // Soporta números y cadenas
-  timestamp: Date;
+class SensorData extends Model {
+  public id!: number;
+  public type!: string;
+  public value!: number;
+  public timestamp!: Date;
 }
 
-// Define el esquema con Mixed, pero especifica los posibles tipos en la interfaz
-const SensorDataSchema: Schema = new Schema({
-  type: { type: String, required: true },
-  value: { type: Number, required: true }, // Forzamos a que sea un número y no nulo
-  timestamp: { type: Date, default: Date.now },
-});
+SensorData.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    type: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    value: {
+      type: DataTypes.FLOAT, // Para valores numéricos con decimales
+      allowNull: false,
+    },
+    timestamp: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+  },
+  {
+    sequelize,
+    tableName: 'sensor_data',
+    timestamps: false,
+  }
+);
 
-
-const SensorDataModel = mongoose.model<ISensorData>('SensorData', SensorDataSchema);
-
-export { SensorDataModel, ISensorData };
+export default SensorData;

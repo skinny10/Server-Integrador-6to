@@ -45,7 +45,7 @@ export class SensorDataController {
 
     public async handleHumidity2Data(req: Request, res: Response): Promise<void> {
         const { value } = req.body;
-        await this.humidityService2.saveHumidity2Data(value);
+        await this.humidityService2.saveHumidityData(value);
         res.status(200).send('Humidity data saved');
     }
 

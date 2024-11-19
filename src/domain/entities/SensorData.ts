@@ -3,3 +3,4 @@ export interface SensorData {
     value: number | string;
     timestamp: Date;
 }
+
