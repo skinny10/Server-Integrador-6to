@@ -16,7 +16,7 @@ const server = app.listen(port, () =>
 );
 
 app.use(bodyParser.json());
-
+  
 // Configuración de Sequelize
 sequelize
   .sync()
